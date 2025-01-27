@@ -24,9 +24,7 @@ export default class TaskList extends Component {
 
   render() {
     const { todos, onDeleted, onSave, onToggleCompleted, onToggleEditing, filter } = this.props
-
     let elements = []
-
     function TaskWithProps(item) {
       return (
         <Task
@@ -43,6 +41,7 @@ export default class TaskList extends Component {
           onToggleEditing={() => {
             onToggleEditing(item.id)
           }}
+          timer={item.timer}
         />
       )
     }

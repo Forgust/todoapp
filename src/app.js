@@ -22,14 +22,19 @@ export default class App extends Component {
       }
     })
   }
-
-  createDataItem(text) {
+  timeFormat = (min = 0, sec = 0) => {
+    let time = Number(min) * 60 + Number(sec)
+    console.log(min, sec, time)
+    return time
+  }
+  createDataItem(text, min, sec) {
     return {
       label: text,
       editing: false,
       completed: false,
       id: (this.maxId += 1),
       date: new Date(),
+      timer: this.timeFormat(min, sec),
     }
   }
 
@@ -51,9 +56,9 @@ export default class App extends Component {
     })
   }
 
-  onTaskAdd = (text) => {
+  onTaskAdd = (text, min, sec) => {
     this.setState(({ todoData }) => {
-      const newArray = [...todoData, this.createDataItem(text)]
+      const newArray = [...todoData, this.createDataItem(text, min, sec)]
 
       return {
         todoData: newArray,
