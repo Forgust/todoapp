@@ -44,24 +44,16 @@ const App = () => {
   }
 
   const deleteTask = (id) => {
-    setTodoData(({ todoData }) => {
-      const idx = todoData.findIndex((el) => el.id === id)
-      const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)]
+    const idx = todoData.findIndex((el) => el.id === id)
+    const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)]
 
-      return {
-        todoData: newArray,
-      }
-    })
+    setTodoData(newArray)
   }
 
   const onTaskAdd = (text, min, sec) => {
-    setTodoData(({ todoData }) => {
-      const newArray = [...todoData, createDataItem(text, min, sec)]
+    const newArray = [...todoData, createDataItem(text, min, sec)]
 
-      return {
-        todoData: newArray,
-      }
-    })
+    setTodoData(newArray)
   }
 
   const onToggleCompleted = (id) => {
