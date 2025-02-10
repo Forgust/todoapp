@@ -27,6 +27,7 @@ export default class App extends Component {
     console.log(min, sec, time)
     return time
   }
+
   createDataItem(text, min, sec) {
     return {
       label: text,
@@ -35,6 +36,7 @@ export default class App extends Component {
       id: (this.maxId += 1),
       date: new Date(),
       timer: this.timeFormat(min, sec),
+      timerId: '',
     }
   }
 
@@ -103,6 +105,8 @@ export default class App extends Component {
             onToggleCompleted={this.onToggleCompleted}
             onToggleEditing={this.onToggleEditing}
             filter={filter}
+            addTimerId={this.addTimerId}
+            deleteTimerId={this.deleteTimerId}
           />
           <Footer count={count} changeFilter={this.changeFilter} filter={filter} clearCompleted={this.clearCompleted} />
         </section>

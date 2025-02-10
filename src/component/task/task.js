@@ -43,7 +43,9 @@ export default class Task extends Component {
       this.props.onToggleEditing()
     }
   }
+
   updateTimer = (time = this.state.futureTime) => {
+    console.log('tik-tak')
     if (time < 0) {
       clearInterval(this.state.timerId)
       return
@@ -59,6 +61,7 @@ export default class Task extends Component {
       futureTime: (time = time - 1),
     })
   }
+
   timerStart = () => {
     if (this.state.timerId) {
       return
@@ -78,7 +81,7 @@ export default class Task extends Component {
     clearInterval(this.state.timerId)
   }
   render() {
-    const { onDeleted, onToggleCompleted, onToggleEditing, completed, editing, date } = this.props
+    const { onDeleted, onToggleCompleted, onToggleEditing, completed, editing, date, visible } = this.props
     let classNames = ''
 
     if (completed) {
@@ -86,6 +89,10 @@ export default class Task extends Component {
     }
     if (editing) {
       classNames += ' editing'
+    }
+
+    if (!visible) {
+      classNames += ' hidden'
     }
     return (
       <li className={classNames}>

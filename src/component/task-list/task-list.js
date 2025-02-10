@@ -20,12 +20,42 @@ export default class TaskList extends Component {
     onSave: PropTypes.func,
     onToggleCompleted: PropTypes.func,
     onToggleEditing: PropTypes.func,
+    addTimerId: PropTypes.func,
+  }
+
+  filterSort(filter, elementState) {
+    let visible = true
+    switch (filter) {
+      case 'All':
+        visible = true
+        break
+      case 'Active':
+        if (!elementState) {
+          visible = true
+        } else {
+          visible = false
+        }
+        break
+      case 'Completed':
+        if (elementState) {
+          visible = true
+        } else {
+          visible = false
+        }
+        break
+      default:
+        visible = true
+    }
+    return visible
   }
 
   render() {
     const { todos, onDeleted, onSave, onToggleCompleted, onToggleEditing, filter } = this.props
     let elements = []
-    function TaskWithProps(item) {
+
+    elements = todos.map((item) => {
+      let visible = this.filterSort(filter, item.completed)
+
       return (
         <Task
           date={item.date}
@@ -42,32 +72,11 @@ export default class TaskList extends Component {
             onToggleEditing(item.id)
           }}
           timer={item.timer}
+          timerId={item.timerId}
+          visible={visible}
         />
       )
-    }
-
-    switch (filter) {
-      case 'Active':
-        elements = todos.map((item) => {
-          if (!item.completed) {
-            return TaskWithProps(item)
-          }
-        })
-        break
-      case 'Completed':
-        elements = todos.map((item) => {
-          if (item.completed) {
-            return TaskWithProps(item)
-          }
-        })
-        break
-      case 'All':
-        elements = todos.map((item) => TaskWithProps(item))
-        break
-      default:
-        throw new Error('Incorrect filter')
-    }
-
+    })
     return <ul className="todo-list">{elements}</ul>
   }
 }
