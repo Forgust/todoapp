@@ -1,131 +1,93 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import PropTypes from 'prop-types'
 import KG from 'date-fns/locale/en-AU'
 
+import Timer from '../timer'
+
 import './task.css'
 
-export default class Task extends Component {
-  static defaultProps = {
-    date: new Date(),
+function Task({ onDeleted, onToggleCompleted, onToggleEditing, completed, editing, date, visible, label, time }) {
+  const [newLabel, setLabel] = useState(label)
+
+  const onEditingChange = (e) => {
+    setLabel(e.target.value)
   }
 
-  static propTypes = {
-    date: PropTypes.instanceOf(Date),
-    completed: PropTypes.bool,
-    editing: PropTypes.bool,
-    label: PropTypes.string,
-    onToggleEditing: PropTypes.func,
-    onToggleCompleted: PropTypes.func,
-    onDeleted: PropTypes.func,
-  }
-
-  state = {
-    label: this.props.label,
-    currentTime: '',
-    oldTime: '',
-    futureTime: '',
-    timerId: '',
-  }
-
-  componentDidMount() {
-    this.updateTimer(this.props.timer)
-  }
-
-  onEditingChange = (e) => {
-    this.setState({
-      label: e.target.value,
-    })
-  }
-
-  onEditingChangeComplete = (e) => {
+  const onEditingChangeComplete = (e) => {
     if (e.key === 'Enter') {
-      this.props.onToggleEditing()
+      onToggleEditing()
     }
+  }
+  function timeReForm(time) {
+    let res = []
+    const secondCounter = time % 60
+    const minuteCounter = Math.floor(time / 60)
+
+    const seconds = String(secondCounter).length === 1 ? `0${secondCounter}` : secondCounter
+    const minutes = String(minuteCounter).length === 1 ? `0${minuteCounter}` : minuteCounter
+    res = [seconds, minutes]
+    return res
   }
 
-  updateTimer = (time = this.state.futureTime) => {
-    console.log('tik-tak')
-    if (time < 0) {
-      clearInterval(this.state.timerId)
-      return
-    }
-    let min = Math.floor(time / 60)
-    let seconds = time % 60
-    min = min < 10 ? '0' + min : min
-    seconds = seconds < 10 ? '0' + seconds : seconds
-    let res = `${min}:${seconds}`
-    this.setState({
-      currentTime: res,
-      oldTime: time,
-      futureTime: (time = time - 1),
-    })
+  const [sec, min] = timeReForm(time)
+
+  let classNames = ''
+
+  if (completed) {
+    classNames += 'completed'
+  }
+  if (editing) {
+    classNames += ' editing'
   }
 
-  timerStart = () => {
-    if (this.state.timerId) {
-      return
-    }
-    const timerId = setInterval(this.updateTimer, 1000)
-    this.setState({
-      timerId: timerId,
-    })
+  if (!visible) {
+    classNames += ' hidden'
   }
-  timerStop = () => {
-    clearInterval(this.state.timerId)
-    this.setState({
-      timerId: '',
-    })
-  }
-  componentWillUnmount() {
-    clearInterval(this.state.timerId)
-  }
-  render() {
-    const { onDeleted, onToggleCompleted, onToggleEditing, completed, editing, date, visible } = this.props
-    let classNames = ''
 
-    if (completed) {
-      classNames += 'completed'
-    }
-    if (editing) {
-      classNames += ' editing'
-    }
-
-    if (!visible) {
-      classNames += ' hidden'
-    }
-    return (
-      <li className={classNames}>
-        <div className="view">
-          <input className="toggle" type="checkbox" onChange={onToggleCompleted} checked={completed} />
-          <label>
-            <span className="title" onClick={onToggleCompleted}>
-              {this.state.label}
-            </span>
-            <span className="description">
-              <button className="icon icon-play" onClick={this.timerStart}></button>
-              <button className="icon icon-pause" onClick={this.timerStop}></button>
-              {this.state.currentTime}
-            </span>
-            <span className="description">
-              {`created ${formatDistanceToNow(date, {
-                includeSeconds: true,
-                locale: KG,
-                addSuffix: true,
-              })}`}
-            </span>
-          </label>
-          <button className="icon icon-edit" onClick={onToggleEditing} />
-          <button className="icon icon-destroy" onClick={onDeleted} />
-        </div>
-        <input
-          type="text"
-          className="edit"
-          defaultValue={this.state.label}
-          onChange={this.onEditingChange}
-          onKeyDown={this.onEditingChangeComplete}
-        />
-      </li>
-    )
-  }
+  return (
+    <li className={classNames}>
+      <div className="view">
+        <input className="toggle" type="checkbox" onChange={onToggleCompleted} checked={completed} />
+        <label>
+          <span className="title" onClick={onToggleCompleted}>
+            {newLabel}
+          </span>
+          <Timer timeReForm={timeReForm} sec={sec} min={min} time={time} />
+          <span className="description">
+            {`created ${formatDistanceToNow(date, {
+              includeSeconds: true,
+              locale: KG,
+              addSuffix: true,
+            })}`}
+          </span>
+        </label>
+        <button className="icon icon-edit" onClick={onToggleEditing} />
+        <button className="icon icon-destroy" onClick={onDeleted} />
+      </div>
+      <input
+        type="text"
+        className="edit"
+        defaultValue={label}
+        onChange={onEditingChange}
+        onKeyDown={onEditingChangeComplete}
+      />
+    </li>
+  )
 }
+
+Task.defaultProps = {
+  date: new Date(),
+}
+
+Task.propTypes = {
+  date: PropTypes.instanceOf(Date),
+  completed: PropTypes.bool,
+  editing: PropTypes.bool,
+  label: PropTypes.string,
+  onToggleEditing: PropTypes.func,
+  onToggleCompleted: PropTypes.func,
+  onDeleted: PropTypes.func,
+}
+
+export default Task
