@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { nanoid } from 'nanoid'
 
 import './app.css'
 
@@ -9,8 +10,6 @@ import TaskList from './component/task-list'
 const App = () => {
   const [todoData, setTodoData] = useState([])
   const [filter, setFilter] = useState('All')
-
-  let maxId = 0
 
   const clearCompleted = () => {
     setTodoData(({ todoData }) => {
@@ -30,7 +29,7 @@ const App = () => {
       label: text,
       editing: false,
       completed: false,
-      id: (maxId += 1),
+      id: nanoid(),
       date: new Date(),
       time: timeFormat(min, sec),
     }
