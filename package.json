@@ -23,8 +23,7 @@
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write src/",
-    "prepare": "husky",
-    "install": "yarn install --ignore-engines"
+    "prepare": "husky"
   },
   "eslintConfig": {
     "extends": [
